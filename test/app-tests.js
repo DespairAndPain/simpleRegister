@@ -8,7 +8,7 @@ require('should-http');
 
 chai.use(chaiHttp);
 
-describe('Should add object and response "Just added"', function() {
+describe('Should add object and response "Just added" or check and if exist response with "Alredy exist"', function() {
 	it('should add a SINGLE user on /register/ POST', function(done) {
 
 		chai.request(server)
@@ -34,9 +34,7 @@ describe('Should add object and response "Just added"', function() {
 			done();
 		});
 	});
-});
 
-describe('Should response "Alredy exist"', function() {
 	it('should check existing user', function(done) {
 
 		after(function() {
@@ -72,5 +70,71 @@ describe('Should response "Alredy exist"', function() {
 		});
 
 
+	});
+});
+
+describe('Should check empty input', function() {
+	it('empty username', function(done) {
+		chai.request(server)
+		.post('/register/')
+		.type('form')
+		.send({'username': '', 'lastName': 'Jamson', 'email': 'stevejamson@gmail.com'})
+		.end(function(err, res){
+
+			res.should.have.status(200);
+			res.should.be.json;
+
+			res.body.should.have.property('status');
+			res.body.status.should.equal('Uncorrect input');
+			done();
+		});
+	});
+
+	it('empty lastName', function(done) {
+		chai.request(server)
+		.post('/register/')
+		.type('form')
+		.send({'username': 'Stive', 'lastName': '', 'email': 'stevejamson@gmail.com'})
+		.end(function(err, res){
+
+			res.should.have.status(200);
+			res.should.be.json;
+
+			res.body.should.have.property('status');
+			res.body.status.should.equal('Uncorrect input');
+			done();
+		});
+	});
+
+	it('empty email', function(done) {
+		chai.request(server)
+		.post('/register/')
+		.type('form')
+		.send({'username': '', 'lastName': 'Jamson', 'email': ''})
+		.end(function(err, res){
+
+			res.should.have.status(200);
+			res.should.be.json;
+
+			res.body.should.have.property('status');
+			res.body.status.should.equal('Uncorrect input');
+			done();
+		});
+	});
+
+	it('uncorrect email', function(done) {
+		chai.request(server)
+		.post('/register/')
+		.type('form')
+		.send({'username': '', 'lastName': 'Jamson', 'email': 'stevejamson.com'})
+		.end(function(err, res){
+
+			res.should.have.status(200);
+			res.should.be.json;
+
+			res.body.should.have.property('status');
+			res.body.status.should.equal('Uncorrect input');
+			done();
+		});
 	});
 });
