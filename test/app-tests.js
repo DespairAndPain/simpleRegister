@@ -9,7 +9,18 @@ require('should-http');
 chai.use(chaiHttp);
 
 describe('Should add object and response "Just added" or check and if exist response with "Alredy exist"', function() {
-	it('should add a SINGLE user on /register/ POST', function(done) {
+	
+
+	after(function() {
+			//  Удаление записи после всех действий
+			var model = require('../lib/model/users');
+			model.remove({ "email": 'stevejamson@gmail.com' }, function (err) {
+				if (err) return console.log(err);
+				else console.log('Removed');
+			});
+		});
+
+	it('should add a user on /register/ POST', function(done) {
 
 		chai.request(server)
 		.post('/register/')
@@ -37,14 +48,7 @@ describe('Should add object and response "Just added" or check and if exist resp
 
 	it('should check existing user', function(done) {
 
-		after(function() {
-			//  Удаление записи после всех действий
-			var model = require('../lib/model/users');
-			model.remove({ "email": 'stevejamson@gmail.com' }, function (err) {
-				if (err) return console.log(err);
-				else console.log('Removed');
-			});
-		});
+		
 
 		chai.request(server)
 		.post('/register/')
